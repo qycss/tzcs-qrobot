@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="love.simbot.example.mapper.RobotUserTeamMapper">
+
+    <resultMap type="RobotUserTeamDTO" id="RobotUserTeamResult">
+        <result property="id" column="id"/>
+        <result property="teamId" column="team_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="userCode" column="user_code"/>
+        <result property="userType" column="user_type"/>
+    </resultMap>
+
+    <select id="selectOpenRobotUserTeamListByTeamId" resultMap="RobotUserTeamResult">
+        select id, team_id, user_type, user_name, user_code, create_time
+        from robot_user_team
+        <where>
+            <if test="teamId != null ">and team_id = #{teamId}</if>
+        </where>
+    </select>
+
+    <!--  添加报名记录  -->
+    <insert id="addRobotUserTeam" useGeneratedKeys="true" keyProperty="id">
+        insert into robot_user_team
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="teamId != null">team_id,</if>
+            <if test="userType != null">user_type,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="userCode != null">user_code,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="teamId != null">#{teamId},</if>
+            <if test="userType != null">#{userType},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="userCode != null">#{userCode},</if>
+            now()
+        </trim>
+    </insert>
+
+    <!--  删除报名记录  -->
+    <delete id="deleteRobotUserTeam">
+        delete
+        from robot_user_team
+        where user_code = #{userCode} and team_id = #{teamId}
+    </delete>
+
+</mapper>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 使用springboot的parent -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.5.0</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <java.version>1.8</java.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- 使用simbot的parent进行版本控制 -->
+            <dependency>
+                <groupId>love.forte.simple-robot</groupId>
+                <artifactId>parent</artifactId>
+                <version>2.2.3</version><!--vv-->
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <groupId>simbot.example</groupId>
+    <artifactId>tzcs-qq-robot</artifactId>
+
+    <dependencies>
+
+        <!--使用mirai组件-springboot-starter -->
+        <dependency>
+            <groupId>love.forte.simple-robot</groupId>
+            <artifactId>component-mirai-spring-boot-starter</artifactId>
+        </dependency>
+
+        <!-- 使用spring的logging -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>2.1.3</version>
+        </dependency>
+
+        <!--MySQL 的驱动依赖，点击就可以查看，此时默认的是8.0的，
+            也可以根据自己使用的mysql版本号，来指定版本号
+            我使用的5.7
+        -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.mamoe</groupId>
+            <artifactId>mirai-core-jvm</artifactId>
+            <version>2.8.0</version>
+        </dependency>
+
+        <!-- 定时任务模块 -->
+        <dependency>
+            <groupId>love.forte.simple-robot.time-task</groupId>
+            <artifactId>time-task-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>love.forte.simple-robot.time-task</groupId>
+            <artifactId>time-task-quartz</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Springboot打包插件。使用 mvn package 进行打包。 -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

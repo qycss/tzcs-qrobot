@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="love.simbot.example.mapper.RobotRouterMapper">
+
+    <resultMap type="RobotRouterDTO" id="RobotRouterResult">
+        <result property="id" column="team_id"/>
+        <result property="routerName" column="router_name"/>
+        <result property="routerClass" column="router_class"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="selectRobotRouterVo">
+        select id, router_name, router_class, remark
+        from robot_router
+    </sql>
+
+    <select id="selectRobotRouterList" resultMap="RobotRouterResult">
+        <include refid="selectRobotRouterVo"/>
+    </select>
+
+    <select id="selectRobotRouterByRouterName" resultMap="RobotRouterResult">
+        <include refid="selectRobotRouterVo"/>
+        where router_name = #{routerName}
+    </select>
+
+    <insert id="insertRobotRouter" useGeneratedKeys="true" keyProperty="id">
+        insert into robot_router
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="routerName != null">router_name,</if>
+            <if test="routerClass != null">router_class,</if>
+            <if test="remark != null">remark,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="routerName != null">#{routerName},</if>
+            <if test="routerClass != null">#{routerClass},</if>
+            <if test="remark != null">#{remark},</if>
+            now()
+        </trim>
+    </insert>
+
+    <update id="updateRobotRouter">
+        update robot_router
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="routerName != null">router_name = #{routerName},</if>
+            <if test="routerClass != null">router_class = #{routerClass},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where router_name = #{routerName}
+    </update>
+
+    <delete id="deleteTeam" parameterType="Long">
+        delete
+        from team
+        where team_id = #{teamId}
+    </delete>
+
+    <!--  获取群内最新招募团队  -->
+    <select id="getLatestRobotRouter" resultMap="RobotRouterResult">
+        <include refid="selectRobotRouterVo"/>
+        where group_id = #{groupId} and team_status = '1';
+    </select>
+
+</mapper>

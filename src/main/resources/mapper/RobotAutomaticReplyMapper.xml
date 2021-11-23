@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="love.simbot.example.mapper.RobotAutomaticReplyMapper">
+
+    <resultMap type="RobotAutomaticReplyDTO" id="RobotAutomaticReplyResult">
+        <result property="id" column="team_id"/>
+        <result property="robotRevice" column="robot_revice"/>
+        <result property="robotReply" column="robot_reply"/>
+    </resultMap>
+
+    <sql id="selectRobotAutomaticReplyVo">
+        select id, robot_revice, robot_reply
+        from robot_automatic_reply
+    </sql>
+
+
+    <select id="selectRobotRouterList" resultMap="RobotAutomaticReplyResult">
+        <include refid="selectRobotAutomaticReplyVo"/>
+        where robot_revice = #{robotRevice}
+    </select>
+
+    <insert id="insertRobotAutomaticReply" useGeneratedKeys="true" keyProperty="id">
+        insert into robot_automatic_reply
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="robotRevice != null">robot_revice,</if>
+            <if test="robotReply != null">robot_reply,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="robotRevice != null">#{robotRevice},</if>
+            <if test="robotReply != null">#{robotReply},</if>
+            now()
+        </trim>
+    </insert>
+
+    <update id="updateRobotAutomaticReply">
+        update robot_automatic_reply
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="robotRevice != null">robot_revice = #{robotRevice},</if>
+            <if test="robotReply != null">robot_reply = #{robotReply},</if>
+        </trim>
+        where robot_revice = #{robotRevice}
+    </update>
+
+    <delete id="deleteTeam" parameterType="Long">
+        delete
+        from team
+        where team_id = #{teamId}
+    </delete>
+
+    <!--  获取群内最新招募团队  -->
+    <select id="getLatestRobotAutomaticReply" resultMap="RobotAutomaticReplyResult">
+        <include refid="selectRobotAutomaticReplyVo"/>
+        where group_id = #{groupId} and team_status = '1';
+    </select>
+
+</mapper>

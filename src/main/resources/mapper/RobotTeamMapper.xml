@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="love.simbot.example.mapper.RobotTeamMapper">
+
+    <resultMap type="RobotTeamDTO" id="RobotTeamResult">
+        <result property="teamId" column="team_id"/>
+        <result property="teamName" column="team_name"/>
+        <result property="groupId" column="group_id"/>
+        <result property="teamStatus" column="team_status"/>
+        <result property="firstInInstances" column="first_in_instances"/>
+    </resultMap>
+
+    <sql id="selectRobotTeamVo">
+        select team_id, team_name, group_id, team_status
+        from robot_team
+    </sql>
+
+    <select id="selectRobotTeamList" resultMap="RobotTeamResult">
+        <include refid="selectRobotTeamVo"/>
+        <where>
+            <if test="teamId != null ">and team_id = #{teamId}</if>
+        </where>
+    </select>
+
+    <select id="selectOpenRobotTeamByGroupId" resultMap="RobotTeamResult">
+        select team_id, team_name, member_cnt, group_id, team_status, team_amount, first_in_instances, create_time
+        from robot_team
+        <where>
+            <if test="groupId != null ">and group_id = #{groupId}</if>
+            and team_status = '1';
+        </where>
+    </select>
+
+    <insert id="openRobotTeam" useGeneratedKeys="true" keyProperty="teamId">
+        insert into robot_team
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teamId != null">team_id,</if>
+            <if test="teamName != null">team_name,</if>
+            <if test="groupId != null">group_id,</if>
+            <if test="teamStatus != null">team_status,</if>
+            create_time
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teamId != null">#{teamId},</if>
+            <if test="teamName != null">#{teamName},</if>
+            <if test="groupId != null">#{groupId},</if>
+            <if test="teamStatus != null">#{teamStatus},</if>
+            now()
+        </trim>
+    </insert>
+
+    <update id="closeRobotTeam">
+        update robot_team
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teamAmount != null">team_amount = #{teamAmount},</if>
+            <if test="teamStatus != null">team_status = #{teamStatus},</if>
+        </trim>
+        where group_id = #{groupId}
+    </update>
+
+    <update id="chooseRobotTeamFirstInInstances">
+        update robot_team
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="firstInInstances != null">first_in_instances = #{firstInInstances},</if>
+        </trim>
+        where team_id = #{teamId}
+    </update>
+
+    <delete id="deleteTeam" parameterType="Long">
+        delete
+        from robot_team
+        where team_id = #{teamId}
+    </delete>
+
+</mapper>

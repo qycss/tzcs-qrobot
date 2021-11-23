@@ -1,0 +1,62 @@
+logging:
+  level:
+    love:
+      forte:
+        simbot: debug
+
+simbot:
+  core:
+    # 扫描 simbot-bots目录下的所有 .bot 文件。
+    bot-resource-type: RESOURCE_FIRST
+  component:
+    mirai:
+      message:
+        cache:
+          # 是否启动默认消息缓存。默认为false，即不启用。
+          enable: true
+          # 私聊消息缓存最大容量
+          priCapacity: 16
+          # 私聊消息缓存初始容量
+          priInitialCapacity: 16
+          # 群消息缓存最大容量
+          groCapacity: 128
+          # 群消息缓存初始容量
+          groInitialCapacity: 128
+          # 私聊缓存负载因子。默认为 0.75。
+          priLoadFactor: 0.75
+          # 群消息缓存负载因子。默认为 0.75。
+          groLoadFactor: 0.75
+
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://101.133.230.111:3306/qrobot?useUnicode=true&characterEncoding=utf-8&useSSL=false
+    username: root
+    password: qwe123
+    # Hikari 连接池配置
+    # 最小空闲连接数量
+    hikari:
+      minimum-idle: 5
+      # 空闲连接存活最大时间，默认600000（10分钟）
+      idle-timeout: 180000
+      # 连接池最大连接数，默认是10
+      maximum-pool-size: 10
+      # 此属性控制从池返回的连接的默认自动提交行为,默认值：true
+      auto-commit: true
+      # 连接池名称
+      pool-name: MyHikariCP
+      # 此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
+      max-lifetime: 1800000
+      # 数据库连接超时时间,默认30秒，即30000
+      connection-timeout: 30000
+      connection-test-query: SELECT 1
+
+# MyBatis
+mybatis:
+  # 搜索指定包别名
+  typeAliasesPackage: love.simbot.example.domain
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapperLocations: classpath*:mapper/*Mapper.xml
+  # 加载全局的配置文件
+  configLocation: classpath:mybatis/mybatis-config.xml
