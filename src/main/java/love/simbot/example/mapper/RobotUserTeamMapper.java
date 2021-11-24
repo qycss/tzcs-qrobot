@@ -15,4 +15,10 @@ public interface RobotUserTeamMapper {
 
     // 删除报名记录
     int deleteRobotUserTeam(String userCode, Long teamId);
+
+    // 根据报名昵称查找报名qq
+    String selectUserTeamUserCodeByUserName(String userName);
+
+    // 删除团队的所有报名记录
+    int deleteUserTeamByTeamId(Long teamId);
 }

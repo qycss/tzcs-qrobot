@@ -48,4 +48,17 @@
         where user_code = #{userCode} and team_id = #{teamId}
     </delete>
 
+    <!--  根据报名昵称查找报名qq  -->
+    <select id="selectUserTeamUserCodeByUserName" resultType="String">
+        select user_code
+        from robot_user_team
+        where user_name = #{userName}
+    </select>
+
+    <!--    -->
+    <delete id="deleteUserTeamByTeamId">
+        delete
+        from robot_user_team
+        where team_id = #{teamId}
+    </delete>
 </mapper>

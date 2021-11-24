@@ -63,7 +63,7 @@ public class ImageUtils {
                 graphics.setColor(Color.BLACK);
                 //sum--;
                 String value;
-                if(cnt>=sum) value = "未进组黑鬼";
+                if(cnt>=sum) value = "";
                 else{
                     value = cellsValue.get(cnt).getUserName();
                     if(value.length()>=6) {

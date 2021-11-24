@@ -11,6 +11,7 @@ import love.simbot.example.cache.GroupCache;
 import love.simbot.example.constants.RotConstants;
 import love.simbot.example.domain.RobotTeamDTO;
 import love.simbot.example.mapper.RobotTeamMapper;
+import love.simbot.example.mapper.RobotUserTeamMapper;
 import love.simbot.example.strategy.RouterStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,8 @@ public class CloseTeamStrategyImpl implements RouterStrategy {
 
     @Autowired
     RobotTeamMapper robotTeamMapper;
+    @Autowired
+    RobotUserTeamMapper robotUserTeamMapper;
 
     @Override
     public void router(GroupMsg groupMsg, Sender sender, Getter getter, Setter setter) {
@@ -65,6 +68,7 @@ public class CloseTeamStrategyImpl implements RouterStrategy {
             }
             robotTeamDTO.setTeamStatus(RotConstants.CLOSE_GROUP);
             robotTeamMapper.closeRobotTeam(robotTeamDTO);
+            robotUserTeamMapper.deleteUserTeamByTeamId(robotTeamDTO.getTeamId());
             GroupCache.removeGroupCache(groupId);
             sender.sendGroupMsg(groupMsg, result);
         } catch (Exception e) {

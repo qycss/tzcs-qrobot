@@ -42,8 +42,13 @@ public class JoinTeamStrategyImpl implements RouterStrategy {
         }
 
         String[] s = groupMsg.getMsgContent().refactor(item -> item.at().remove()).getMsg().trim().split("\\s+");
-        if (s.length != 1) {
-            sender.sendGroupMsg(groupMsg, "进组格式异常，请使用关键词：\"进组\" or \"报名\" ");
+
+        if ((s.length != 1 && s.length != 3)) {
+            sender.sendGroupMsg(groupMsg, "进组格式异常，本人进组：\"进组/报名\" \n代他人进组：\"进组/报名 他人ID 他人QQ\" ");
+            return;
+        }
+        if ((s.length == 3 && !s[2].matches("[1-9][0-9]{4,}"))) {
+            sender.sendGroupMsg(groupMsg, "代进组失败，QQ号码不合法！");
             return;
         }
 
@@ -61,9 +66,16 @@ public class JoinTeamStrategyImpl implements RouterStrategy {
         try {
             AccountInfo accountInfo = groupMsg.getAccountInfo();
 
+            String username = s.length==3 ? s[1] : accountInfo.getAccountRemarkOrNickname();
+            String usercode = s.length==3 ? s[2] : accountInfo.getAccountCode();
+
             // 重复进组检测
-            if (userCache.containsKey(accountInfo.getAccountCode())) {
-                sender.sendGroupMsg(groupMsg, accountInfo.getAccountRemarkOrNickname() + "已进组，请勿重复报名！");
+            if (userCache.containsKey(usercode)) {
+                if(s.length == 1) {
+                    sender.sendGroupMsg(groupMsg, "「" + username + "」已进组，请勿重复报名！");
+                } else{
+                    sender.sendGroupMsg(groupMsg, "「" + username + "」已进组，报名ID为「" + userCache.get(usercode).getUserName() + "」。");
+                }
                 return;
             }
 
@@ -77,13 +89,13 @@ public class JoinTeamStrategyImpl implements RouterStrategy {
             Long teamId = robotTeamDTOS.get(0).getTeamId();
             RobotUserTeamDTO robotUserTeamDTO = new RobotUserTeamDTO();
             robotUserTeamDTO.setTeamId(teamId);
-            robotUserTeamDTO.setUserCode(groupMsg.getAccountInfo().getAccountCode());
-            robotUserTeamDTO.setUserName(groupMsg.getAccountInfo().getAccountRemarkOrNickname());
+            robotUserTeamDTO.setUserCode(usercode);
+            robotUserTeamDTO.setUserName(username);
             robotUserTeamDTO.setUserType(RotConstants.ORDINARY_MEMBER);
             robotUserTeamMapper.addRobotUserTeam(robotUserTeamDTO);
             GroupCache.putUserCache(groupId, robotUserTeamDTO);
 
-            sender.sendGroupMsg(groupMsg, "「" + accountInfo.getAccountRemarkOrNickname() + "」加入团队「" + robotTeamDTOS.get(0).getTeamName() + "」成功！\n当前还剩" + (25 - userCache.size()) + "个位置。");
+            sender.sendGroupMsg(groupMsg, "「" + username + "」加入团队「" + robotTeamDTOS.get(0).getTeamName() + "」成功！\n当前还剩" + (25 - userCache.size()) + "个位置。");
 
         } catch (Exception e) {
             sender.sendGroupMsg(groupMsg, "进组异常：" + e.getMessage());

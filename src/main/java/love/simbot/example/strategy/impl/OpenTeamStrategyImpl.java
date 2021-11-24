@@ -78,8 +78,8 @@ public class OpenTeamStrategyImpl implements RouterStrategy {
             GroupCache.putUserCache(groupId, robotUserTeamDTO);
 
             //设置群公告
-            String groupNoticeText = "新开团，要来的人艾特机器人报名";
-            sender.sendGroupNotice(groupMsg, "新开团通知：" + s[1], s[1] + groupNoticeText, true, false, false, true);
+            String groupNoticeText = "要来的人艾特机器人报名";
+            sender.sendGroupNotice(groupMsg, s[1], s[1] + groupNoticeText, true, false, false, false);
         } catch (Exception e) {
             sender.sendGroupMsg(groupMsg, "开团异常：" + e.getMessage());
             log.error("创建团队异常", e);

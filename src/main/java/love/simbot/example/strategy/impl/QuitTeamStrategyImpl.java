@@ -41,23 +41,25 @@ public class QuitTeamStrategyImpl implements RouterStrategy {
         }
 
         String[] s = groupMsg.getMsgContent().refactor(item -> item.at().remove()).getMsg().trim().split("\\s+");
-        if (s.length != 1) {
-            sender.sendGroupMsg(groupMsg, "退组格式异常，请使用关键词：\"退组\" or \"取消报名\" ");
+        if (s.length != 1 && s.length != 2) {
+            sender.sendGroupMsg(groupMsg, "退组格式异常，本人退组：\"退组/取消报名\" \n代他人退组：\"退组/取消报名 已报名ID\" ");
             return;
         }
 
         Map<String, RobotUserTeamDTO> userCache = GroupCache.getUserCache(groupId);
         if (userCache == null) {
-            sender.sendGroupMsg(groupMsg, "进组失败，当前暂无开团计划！");
+            sender.sendGroupMsg(groupMsg, "当前暂无开团计划！");
             return;
         }
 
         try {
             AccountInfo accountInfo = groupMsg.getAccountInfo();
+            String username = s.length==2 ? s[1] : accountInfo.getAccountRemarkOrNickname();
+            String usercode = s.length==2 ? robotUserTeamMapper.selectUserTeamUserCodeByUserName(username) : accountInfo.getAccountCode();
 
             // 退组检测
-            if (!userCache.containsKey(accountInfo.getAccountCode())) {
-                sender.sendGroupMsg(groupMsg, "退组失败，" + accountInfo.getAccountRemarkOrNickname() + "并未报名！");
+            if (!userCache.containsKey(usercode)) {
+                sender.sendGroupMsg(groupMsg, "退组失败，「" + username + "」并未报名！");
                 return;
             }
 
@@ -70,9 +72,9 @@ public class QuitTeamStrategyImpl implements RouterStrategy {
             Long teamId = robotTeamDTOS.get(0).getTeamId();
 
             // 删除报名信息
-            robotUserTeamMapper.deleteRobotUserTeam(accountInfo.getAccountCode(), teamId);
-            userCache.remove(accountInfo.getAccountCode());
-            sender.sendGroupMsg(groupMsg, "「" + accountInfo.getAccountRemarkOrNickname() + "」退出团队「" + robotTeamDTOS.get(0).getTeamName() + "」成功！\n当前还剩" + (25 - userCache.size()) + "个位置。");
+            robotUserTeamMapper.deleteRobotUserTeam(usercode, teamId);
+            userCache.remove(usercode);
+            sender.sendGroupMsg(groupMsg, "「" + username + "」退出团队「" + robotTeamDTOS.get(0).getTeamName() + "」成功！\n当前还剩" + (25 - userCache.size()) + "个位置。");
 
         } catch (Exception e) {
             sender.sendGroupMsg(groupMsg, "退组异常：" + e.getMessage());

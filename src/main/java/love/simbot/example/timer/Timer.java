@@ -25,10 +25,10 @@ public class Timer {
         sum++;
         Sender sender = botManager.getDefaultBot().getSender().SENDER;
         //sender.sendPrivateMsg("1852023741", "定时任务发送群消息，为了证明没有掉线并且躲过风控管理。次数：" + sum);
-        sender.sendPrivateMsg("1844169164", "定时任务发送群消息，为了证明没有掉线并且躲过风控管理。次数：" + sum);
+        //sender.sendPrivateMsg("1844169164", "定时任务发送群消息，为了证明没有掉线并且躲过风控管理。次数：" + sum);
     }
 
-    @Fixed(value = 30, timeUnit = TimeUnit.MINUTES)
+    @Fixed(value = 60, timeUnit = TimeUnit.MINUTES)
     public void groupTask() {
         groupSum++;
         Sender sender = botManager.getDefaultBot().getSender().SENDER;
